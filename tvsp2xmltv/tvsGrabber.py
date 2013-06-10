@@ -92,9 +92,15 @@ class TvsGrabber(object):
 		self.xmltv_doc.write_xml(defaults.destination_file)
 	
 	def __grab_day(self, date, channel):
+		retry = 0
 		data = self._get_category(date, [channel])
 		for s in data:
-			progData = self._get_detail(s['sendungs_id'])
-			prog = model.Programme(progData)
-			self.xmltv_doc.append_element(prog)
+			# Im Falle eines Fehlers beim grabben
+			try:			
+				progData = self._get_detail(s['sendungs_id'])
+				prog = model.Programme(progData)
+				self.xmltv_doc.append_element(prog)
+			except Exception, e:
+				import traceback
+				logger.log(traceback.format_exc(), logger.WARNING)
 	
