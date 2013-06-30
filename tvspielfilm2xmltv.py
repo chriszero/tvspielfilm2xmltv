@@ -39,8 +39,6 @@ __date__ = '2013-04-23'
 __updated__ = '2013-04-28'
 
 DEBUG = 0
-TESTRUN = 0
-PROFILE = 0
 
 class CLIError(Exception):
     '''Generic exception to raise and log different fatal errors.'''
@@ -121,12 +119,7 @@ USAGE
             
         
         return 0
-    except KeyboardInterrupt:
-        ### handle keyboard interrupt ###
-        return 0
     except Exception as e:
-        if DEBUG or TESTRUN:
-            raise(e)
         logger.log(program_name + ": " + repr(e) + "\n", logger.ERROR)
         return 2
 
@@ -135,18 +128,4 @@ if __name__ == "__main__":
         #sys.argv.append("-h")
         #sys.argv.append("1 'pin' 0 ard.de zdf.de")
         pass
-    if TESTRUN:
-        import doctest
-        doctest.testmod()
-    if PROFILE:
-        import cProfile
-        import pstats
-        profile_filename = 'setup_profile.txt'
-        cProfile.run('main()', profile_filename)
-        statsfile = open("profile_stats.txt", "wb")
-        p = pstats.Stats(profile_filename, stream=statsfile)
-        stats = p.strip_dirs().sort_stats('cumulative')
-        stats.print_stats()
-        statsfile.close()
-        sys.exit(0)
     sys.exit(main())

@@ -101,6 +101,8 @@ class TvsGrabber(object):
 				prog = model.Programme(progData)
 				self.xmltv_doc.append_element(prog)
 			except Exception, e:
-				import traceback
-				logger.log(traceback.format_exc(), logger.WARNING)
+				logger.log("Failed to fetch Details for " + s['sendungs_id'] + " on Channel " + channel, logger.MESSAGE)
+				logger.log("Pausing for 30 seconds.", logger.MESSAGE)
+				from time import sleep
+				sleep(30)
 	
