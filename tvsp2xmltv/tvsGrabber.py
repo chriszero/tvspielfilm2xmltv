@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 import datetime
+import json
 
 from . import model
 from . import defaults
@@ -21,7 +22,8 @@ class TvsGrabber(object):
 	
 		url = "http://tvsapi.cellmp.de/getUpdate.php"
 		r = requests.get(url)
-		return r.json()
+		r.encoding='utf-8'
+		return json.JSONDecoder(strict=False).decode(r.text)
 	
 	
 	def _get_detail(self, prog_id):
@@ -32,7 +34,8 @@ class TvsGrabber(object):
 		payload = {'id': prog_id}
 		url = "http://tvsapi.cellmp.de/getDetails.php"
 		r = requests.get(url, params=payload)
-		return r.json()
+		r.encoding='utf-8'
+		return json.JSONDecoder(strict=False).decode(r.text)
 	
 	
 	def _get_category(self, date, sender=[]):
@@ -58,9 +61,21 @@ class TvsGrabber(object):
 	
 		payload = {'name': 'day', 'channel': channel, 'date': date.isoformat()}
 		url = "http://tvsapi.cellmp.de/getCategory_1_3.php"
-		r = requests.get(url, params=payload)
-		#print(r.url)
-		return r.json()
+		try:
+			r = requests.get(url, params=payload)
+			#print(r.url)
+		except requests.exceptions.RequestException:
+			logger.log("Failed to request", logger.MESSAGE)
+			return []
+		r.encoding='utf-8'
+		## r.json() wollte bei mir so überhaupt nicht
+		## es gab:
+		## 18:24:40 ERROR::tvspielfilm2xmltv.py: TypeError('str() argument 2 must be str, not None',)
+		try:
+			return json.JSONDecoder(strict=False).decode(r.text)
+		except TypeError:
+			logger.log("Failed to decode json", logger.MESSAGE)
+			return []
 	
 	def start_grab(self):
 		
@@ -100,7 +115,7 @@ class TvsGrabber(object):
 				progData = self._get_detail(s['sendungs_id'])
 				prog = model.Programme(progData)
 				self.xmltv_doc.append_element(prog)
-			except Exception, e:
+			except Exception as e:
 				logger.log("Failed to fetch Details for " + s['sendungs_id'] + " on Channel " + channel, logger.MESSAGE)
 				logger.log("Pausing for 30 seconds.", logger.MESSAGE)
 				from time import sleep
