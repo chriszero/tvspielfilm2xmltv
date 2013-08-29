@@ -10,6 +10,7 @@ from . import logger
 class TvsGrabber(object):
 	
 	def __init__(self):
+		self.headers = {'Connection': 'Keep-Alive'}
 		self.channel_list = []
 		self.grab_days = 1
 		self.xmltv_doc = model.XmltvRoot()
@@ -21,7 +22,7 @@ class TvsGrabber(object):
 		"""
 	
 		url = "http://tvsapi.cellmp.de/getUpdate.php"
-		r = requests.get(url)
+		r = requests.get(url, headers=self.headers)
 		r.encoding='utf-8'
 		return json.JSONDecoder(strict=False).decode(r.text)
 	
@@ -33,7 +34,7 @@ class TvsGrabber(object):
 	
 		payload = {'id': prog_id}
 		url = "http://tvsapi.cellmp.de/getDetails.php"
-		r = requests.get(url, params=payload)
+		r = requests.get(url, params=payload, headers=self.headers)
 		r.encoding='utf-8'
 		return json.JSONDecoder(strict=False).decode(r.text)
 	
@@ -62,15 +63,12 @@ class TvsGrabber(object):
 		payload = {'name': 'day', 'channel': channel, 'date': date.isoformat()}
 		url = "http://tvsapi.cellmp.de/getCategory_1_3.php"
 		try:
-			r = requests.get(url, params=payload)
+			r = requests.get(url, params=payload, headers=self.headers)
 			#print(r.url)
 		except requests.exceptions.RequestException:
 			logger.log("Failed to request", logger.MESSAGE)
 			return []
 		r.encoding='utf-8'
-		## r.json() wollte bei mir so überhaupt nicht
-		## es gab:
-		## 18:24:40 ERROR::tvspielfilm2xmltv.py: TypeError('str() argument 2 must be str, not None',)
 		try:
 			return json.JSONDecoder(strict=False).decode(r.text)
 		except TypeError:

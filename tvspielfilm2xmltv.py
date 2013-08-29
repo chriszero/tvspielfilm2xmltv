@@ -34,9 +34,9 @@ from tvsp2xmltv import defaults
 from tvsp2xmltv import tvsGrabber
 
 __all__ = []
-__version__ = 0.2
+__version__ = 0.1
 __date__ = '2013-04-23'
-__updated__ = '2013-04-28'
+__updated__ = '2013-08-29'
 
 DEBUG = 0
 
@@ -80,6 +80,8 @@ USAGE
         # Setup argument parser
         parser = ArgumentParser(description=program_license, formatter_class=RawDescriptionHelpFormatter)
         parser.add_argument("-c", "--controlfile", dest="cfile", action="store", help="create the controlfile [default: %(default)s]")
+        parser.add_argument("-t", "--time", dest="time", default="00:00", help="The time for the control file")
+        parser.add_argument("-d", "--days", dest="days", default="14", help="numberof days for the control file")
         parser.add_argument('-V', '--version', action='version', version=program_version_message)
         parser.add_argument(dest="option",  help="options from xmltv2vdr call [default: %(default)s]", metavar="option", nargs='*')
         
@@ -97,8 +99,9 @@ USAGE
         cfile = args.cfile
         
         if cfile:
-            print('Writing Controlfile [' + cfile + ']')
-            defaults.write_controlfile(cfile)
+            time = args.time
+            days = args.days
+            defaults.write_controlfile(cfile, time, days)
             return 0
         
         if option:

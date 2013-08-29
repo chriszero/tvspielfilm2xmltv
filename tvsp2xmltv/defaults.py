@@ -1,9 +1,25 @@
 # -*- coding: utf-8 -*-
 import operator
+import os
+import configparser
 
-#destination_file = '/var/lib/epgsources/tvspielfilm2xmltv.xmltv'
-destination_file = 'tvspielfilm2xmltv.xml'
-grab_today = True
+def find_in_path(file_name, path=None):
+    """
+    Search for file in the defined pathes
+    """
+    path = path or '/etc/tvspielfilm2xmltv:/etc/vdr/plugins/tvspielfilm2xmltv'
+    for directory in path.split(os.pathsep):
+        file_path = os.path.abspath(os.path.join(directory, file_name))
+        if os.path.exists(file_path):
+            return file_path
+    return file_name
+
+
+config = configparser.ConfigParser()
+config.read(find_in_path('tvspielfilm2xmltv.ini'))
+
+destination_file = config['DEFAULT']['destination_file']
+grab_today = config['DEFAULT']['grab_today']
 
 sart_map = {
 	'SE':'serie', 
@@ -151,12 +167,13 @@ def get_channel_key(value):
 			return name
 
 
-def write_controlfile(path):
+def write_controlfile(path, grab_time, grab_days):
+	print('Writing Controlfile [{0}, {1}, {2}]'.format(path, grab_time, grab_days))
 	sorted_x = sorted(channel_map.values(), key=operator.itemgetter(1))
 	try:
 		f = open(path, "w")
-		f.write('file;00:00;0;0\n') # Write a string to a file
-		f.write('14\n') # Write a string to a file
+		f.write('file;{0};0;0\n'.format(grab_time))	
+		f.write('{0}\n'.format(grab_days))
 		for val in sorted_x:
 			f.write(val)
 			f.write('\n')
