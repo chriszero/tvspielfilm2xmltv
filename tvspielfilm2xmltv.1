@@ -1,0 +1,71 @@
+.TH "tvspielfilm2xmltv" "1" "30 Aug 2013"
+
+.SH
+NAME
+.TP
+tvspielfilm2xmltv - TV Spielfilm Grabber for the xmltv2vdr vdr plugin.
+.SH
+SYNOPSIS
+.TP
+tvspielfilm2xmltv <days> <pin> [<epg images>] <channel id> [<channel id>] ...
+.SH
+DESCRIPTION
+.TP
+Load epg data from the TV Spielfilm web service and output it to file in XMLTV format.
+.SH
+OPTIONS
+.TP
+.BI -c
+Create the Database with the mapping.
+.TP
+.BI -V
+Print version information and exit.
+.TP
+.BI <days>
+Load <days> days in advance.
+.TP
+.BI <pin>
+PIN code needed to access the data. Not used here, set an empty string.
+.TP
+.BI <epg\ images>
+Set to "1" to load epg images. Set to "0" or omit to not load epg images.
+.TP
+.BI <channel\ id>
+The channel ids for the channels to load. Give as many you want.
+.SH
+EXIT STATUS
+.TP
+.B 0
+Successful program execution.
+.TP
+.B 1
+General error.
+.TP
+.B 2
+Network error.
+.SH
+FILES
+.TP
+.I /var/lib/epgsources/tvspielfilm2xmltv
+Database with the mapping of the channel ids to the TVMovie ids.
+.TP
+.I /var/lib/epgsources/tvspielfilm2xmltv.xml
+The current epg information.
+.SH EXAMPLE
+.TP
+Load epg data for channel ard.de with epg images for three days.
+.nf
+.B tvspielfilm2xmltv 3 '' 1 ard.de
+.TP
+Load epg data for channel ard.de and zdf.de without epg images for four days.
+.nf
+.B tvspielfilm2xmltv 4 '' ard.de zdf.de
+.SH SEE ALSO
+.TP
+List of all known channel ids (May not all supported by tvm2xmltv):
+.nf
+.I http://www.vdr-wiki.de/wiki/index.php/Xmltv2vdr-plugin#Verbindliche_Kanalliste
+.TP
+The XMLTV format description:
+.nf
+.I http://wiki.xmltv.org/index.php/XMLTVFormat
