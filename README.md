@@ -19,7 +19,7 @@ apt-get install python3 python3-requests python3-tz
 ```
 
 Install:
+
 ```bash
 make install
 ```
-
