@@ -100,7 +100,7 @@ USAGE
         if cfile:
             time = args.time
             days = args.days
-            defaults.write_controlfile(defaults.control_file, time, days)
+            defaults.write_controlfile(time, days)
             return 0
         
         if option:
