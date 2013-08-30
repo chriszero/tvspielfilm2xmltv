@@ -21,9 +21,8 @@ import sys
 import os, os.path
 
 # Root path
-base_path = '/home/chris/tvspielfilm2xmltv' #FIXME: dirty workaround when starting via hardlink
-#base_path = os.path.dirname(os.path.abspath(__file__))
-print(base_path)
+base_path = os.path.realpath(__file__)
+
 # Insert local directories into path
 sys.path.append(os.path.join(base_path))
 
@@ -79,7 +78,7 @@ USAGE
     try:
         # Setup argument parser
         parser = ArgumentParser(description=program_license, formatter_class=RawDescriptionHelpFormatter)
-        parser.add_argument("-c", "--controlfile", dest="cfile", action="store", help="create the controlfile [default: %(default)s]")
+        parser.add_argument("-c", "--controlfile", dest="cfile", action='store_true', help="create the controlfile")
         parser.add_argument("-t", "--time", dest="time", default="00:00", help="The time for the control file")
         parser.add_argument("-d", "--days", dest="days", default="14", help="numberof days for the control file")
         parser.add_argument('-V', '--version', action='version', version=program_version_message)
@@ -97,11 +96,11 @@ USAGE
         
         option = args.option
         cfile = args.cfile
-        
+
         if cfile:
             time = args.time
             days = args.days
-            defaults.write_controlfile(cfile, time, days)
+            defaults.write_controlfile(time, days)
             return 0
         
         if option:

@@ -19,6 +19,7 @@ config = configparser.ConfigParser()
 config.read(find_in_path('tvspielfilm2xmltv.ini'))
 
 destination_file = config['DEFAULT']['destination_file']
+control_file = config['DEFAULT']['control_file']
 grab_today = config['DEFAULT']['grab_today']
 
 sart_map = {
@@ -167,11 +168,11 @@ def get_channel_key(value):
 			return name
 
 
-def write_controlfile(path, grab_time, grab_days):
-	print('Writing Controlfile [{0}, {1}, {2}]'.format(path, grab_time, grab_days))
+def write_controlfile(grab_time, grab_days):
+	print('Writing Controlfile [{0}, {1}, {2}]'.format(control_file, grab_time, grab_days))
 	sorted_x = sorted(channel_map.values(), key=operator.itemgetter(1))
 	try:
-		f = open(path, "w")
+		f = open(control_file, "w")
 		f.write('file;{0};0;0\n'.format(grab_time))	
 		f.write('{0}\n'.format(grab_days))
 		for val in sorted_x:
