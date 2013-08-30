@@ -15,14 +15,14 @@ Load epg data from the TV Spielfilm web service and output it to file in XMLTV f
 .SH
 OPTIONS
 .TP
-.BI -c\ </path/filename>
-Create the Database with the mapping.
+.BI -c
+Create the grabber control file.
 .TP
 .BI -d
-Maximum number of days for the mapping Database.
+Maximum number of days the data source support. Will be written to the grabber control file.
 .TP
 .BI -t
-The usual data souce update time for the mapping Database.
+The usual time at the data souce update the epg. Will be written to the grabber control file.
 .TP
 .BI -V
 Print version information and exit.
@@ -53,10 +53,10 @@ Network error.
 FILES
 .TP
 .I /var/lib/epgsources/tvspielfilm2xmltv
-Database with the mapping of the channel ids to the TVMovie ids.
+Grabber control file.
 .TP
-.I /var/lib/epgsources/tvspielfilm2xmltv.xml
-The current epg information.
+.I /var/lib/epgsources/tvspielfilm2xmltv.xmltv
+The current grabbed epg information.
 .SH EXAMPLE
 .TP
 Load epg data for channel ard.de with epg images for three days.
@@ -68,7 +68,7 @@ Load epg data for channel ard.de and zdf.de without epg images for four days.
 .B tvspielfilm2xmltv 4 '' ard.de zdf.de
 .SH SEE ALSO
 .TP
-List of all known channel ids (May not all supported by tvm2xmltv):
+List of all known channel ids (May not all supported by tvspielfilm2xmltv):
 .nf
 .I http://www.vdr-wiki.de/wiki/index.php/Xmltv2vdr-plugin#Verbindliche_Kanalliste
 .TP
