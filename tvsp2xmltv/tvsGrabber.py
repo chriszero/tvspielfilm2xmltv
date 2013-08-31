@@ -99,8 +99,11 @@ class TvsGrabber(object):
 		#print("Finished")
 	
 	def add_channel(self, channel):
-		self.channel_list.append(channel)
-		
+		if isinstance(channel, str):
+			self.channel_list.append(channel)
+		elif isinstance(channel, list):
+			self.channel_list += channel
+		print(self.channel_list)
 	
 	def save(self):
 		self.xmltv_doc.write_xml(defaults.destination_file)

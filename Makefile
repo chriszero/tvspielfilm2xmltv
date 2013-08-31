@@ -10,6 +10,11 @@ MANDIR   = $(PREFIX)/share/man
 BINDIR   = $(PREFIX)/bin
 APPDIR   = $(PREFIX)/share/$(GRABBER)
 
+.PHONY: install
+
+all:
+	@true
+
 install:
 # Install the progam files
 	@install -D tvspielfilm2xmltv.py $(DESTDIR)/$(APPDIR)/tvspielfilm2xmltv.py
@@ -27,7 +32,8 @@ install:
 	@ln -s $(DESTDIR)/$(APPDIR)/tvspielfilm2xmltv.py $(DESTDIR)/$(BINDIR)/$(GRABBER)
 # Install the Grabber API
 	@install -d $(DESTDIR)/var/lib/epgsources/$(GRABBER)-img
+#
+# ugo+rw because may different user work with this file
+#
 	@chmod ugo+w $(DESTDIR)/var/lib/epgsources
 	@chmod ugo+w $(DESTDIR)/var/lib/epgsources/$(GRABBER)-img
-
-	@echo "Now create the controll file with \"$(GRABBER) -c\""

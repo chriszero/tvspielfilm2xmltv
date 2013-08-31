@@ -97,11 +97,8 @@ USAGE
         option = args.option
         cfile = args.cfile
 
-        if cfile:
-            time = args.time
-            days = args.days
-            defaults.write_controlfile(time, days)
-            return 0
+        if cfile or not os.path.exists(defaults.control_file):
+            defaults.write_controlfile(args.time, args.days)
         
         if option:
             logger.log('Prepare grabbing...')
@@ -116,8 +113,7 @@ USAGE
                 grabber.pictures = False
                 option.pop(0)
             
-            for i in range(len(option)):
-                grabber.add_channel(option[i])
+            grabber.add_channel(option)
             
             logger.log('Start grabbing...')
             grabber.start_grab()
