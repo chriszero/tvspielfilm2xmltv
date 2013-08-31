@@ -215,7 +215,8 @@ class XmltvRoot(object):
 
 	def write_xml(self, filename):
 		# Delete first because user have no permission to change attrib from files other users own
-		os.remove(filename)
+		if os.path.exists(filename):
+			os.remove(filename)
 		file = open(filename, 'wb')
 		# Set filemode for every written file!
 		os.fchmod(file.fileno(), defaults.file_mode)
