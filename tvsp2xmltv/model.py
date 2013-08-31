@@ -2,6 +2,7 @@
 from . import defaults
 import pytz 
 import datetime
+import os
 from xml.etree.ElementTree import Element, ElementTree, SubElement
 from datetime import date
 
@@ -213,6 +214,8 @@ class XmltvRoot(object):
 
 	def write_xml(self, filename):
 		file = open(filename, 'wb')
+		# Set filemode for every written file!
+		os.fchmod(file.fileno(), defaults.file_mode)
 
 		# Create an ElementTree object from the root element
 		ElementTree(self.root).write(file, encoding="UTF-8", xml_declaration=True)

@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 import operator
 import os
+import stat
 import configparser
+
+# ugo+rw because may different user work with this file
+file_mode = stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH | stat.S_IWOTH
 
 def find_in_path(file_name, path=None):
     """
@@ -173,6 +177,8 @@ def write_controlfile(grab_time, grab_days):
 	sorted_x = sorted(channel_map.values(), key=operator.itemgetter(1))
 	try:
 		f = open(control_file, "w")
+		# Set filemode for every written file!
+		os.fchmod(f.fileno(), file_mode)
 		f.write('file;{0};0;0\n'.format(grab_time))	
 		f.write('{0}\n'.format(grab_days))
 		for val in sorted_x:
