@@ -176,6 +176,8 @@ def write_controlfile(grab_time, grab_days):
 	print('Writing Controlfile [{0}, {1}, {2}]'.format(control_file, grab_time, grab_days))
 	sorted_x = sorted(channel_map.values(), key=operator.itemgetter(1))
 	try:
+		# Delete first because user have no permission to change attrib from files other users own
+		os.remove(control_file)
 		f = open(control_file, "w")
 		# Set filemode for every written file!
 		os.fchmod(f.fileno(), file_mode)
