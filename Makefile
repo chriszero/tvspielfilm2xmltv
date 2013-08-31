@@ -28,8 +28,7 @@ install:
 	@gzip -c9 $(GRABBER).1 > $(DESTDIR)$(MANDIR)/man1/$(GRABBER).1.gz
 # create the app link
 	@install -d $(DESTDIR)$(BINDIR)
-	@rm -f $(DESTDIR)$(BINDIR)/$(GRABBER)
-	@ln -s $(DESTDIR)$(APPDIR)/tvspielfilm2xmltv.py $(DESTDIR)$(BINDIR)/$(GRABBER)
+	@ln -sf ../share/$(GRABBER)/tvspielfilm2xmltv.py $(DESTDIR)$(BINDIR)/$(GRABBER)
 # Install the Grabber API
 # ugo+rw because may different user work with this file
 	@install -d -m ugo+rwx $(DESTDIR)/var/lib/epgsources
