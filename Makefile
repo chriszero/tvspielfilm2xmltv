@@ -22,7 +22,7 @@ install:
 	@install -D tvsp2xmltv/*.py $(DESTDIR)$(APPDIR)/tvsp2xmltv
 # Install the config
 	@install -d $(DESTDIR)/etc/$(GRABBER)
-	@install -b tvspielfilm2xmltv.ini $(DESTDIR)/etc/$(GRABBER)/tvspielfilm2xmltv.ini
+	@install -b -m u+rw,go+r tvspielfilm2xmltv.ini $(DESTDIR)/etc/$(GRABBER)/tvspielfilm2xmltv.ini
 # Install the man page
 	@install -d $(DESTDIR)$(MANDIR)/man1/
 	@gzip -c9 $(GRABBER).1 > $(DESTDIR)$(MANDIR)/man1/$(GRABBER).1.gz
