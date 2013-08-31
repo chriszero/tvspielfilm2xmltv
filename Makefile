@@ -31,12 +31,9 @@ install:
 	@rm -f $(DESTDIR)$(BINDIR)/$(GRABBER)
 	@ln -s $(DESTDIR)$(APPDIR)/tvspielfilm2xmltv.py $(DESTDIR)$(BINDIR)/$(GRABBER)
 # Install the Grabber API
-	@install -d $(DESTDIR)/var/lib/epgsources/$(GRABBER)-img
-#
 # ugo+rw because may different user work with this file
-#
-	@chmod ugo+w $(DESTDIR)/var/lib/epgsources
-	@chmod ugo+w $(DESTDIR)/var/lib/epgsources/$(GRABBER)-img
-
+	@install -d -m ugo+rwx $(DESTDIR)/var/lib/epgsources
+	@install -d -m ugo+rwx $(DESTDIR)/var/lib/epgsources/$(GRABBER)-img
+# Done.
 	@echo All done.
 	@echo "Now create the controll file with \"$(GRABBER) -c\""
