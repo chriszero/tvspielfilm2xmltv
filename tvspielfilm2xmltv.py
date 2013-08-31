@@ -106,11 +106,17 @@ USAGE
         if option:
             logger.log('Prepare grabbing...')
             grabber = tvsGrabber.TvsGrabber()
-            grabber.grab_days = int(option[0])
+            #<days> ‘‘ [<pictures>] ard.de zdf.de
+            grabber.grab_days = int(option.pop(0))
+            option.pop(0) # We do not use an PIN
+            if option[0] == '1':
+                grabber.pictures = True
+                option.pop(0)
+            elif option[0] == '0':
+                grabber.pictures = False
+                option.pop(0)
             
-            opt_len = len(option)
-            for i in range(3, opt_len):
-                #5 ‘‘ 0 ard.de zdf.de
+            for i in range(len(option)):
                 grabber.add_channel(option[i])
             
             logger.log('Start grabbing...')

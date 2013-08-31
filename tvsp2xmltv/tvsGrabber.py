@@ -13,6 +13,7 @@ class TvsGrabber(object):
 		self.headers = {'Connection': 'Keep-Alive'}
 		self.channel_list = []
 		self.grab_days = 1
+		self.pictures = False
 		self.xmltv_doc = model.XmltvRoot()
 		
 	
