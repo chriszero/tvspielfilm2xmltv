@@ -37,3 +37,6 @@ install:
 #
 	@chmod ugo+w $(DESTDIR)/var/lib/epgsources
 	@chmod ugo+w $(DESTDIR)/var/lib/epgsources/$(GRABBER)-img
+
+	@echo All done.
+	@echo "Now create the controll file with \"$(GRABBER) -c\""

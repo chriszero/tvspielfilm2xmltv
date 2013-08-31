@@ -97,7 +97,7 @@ USAGE
         option = args.option
         cfile = args.cfile
 
-        if cfile or not os.path.exists(defaults.control_file):
+        if cfile:
             defaults.write_controlfile(args.time, args.days)
         
         if option:
