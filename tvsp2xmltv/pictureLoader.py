@@ -4,7 +4,7 @@ import requests
 import glob
 from io import open
 from os import path, remove, fchmod
-import urllib
+from urlparse import urlsplit
 from . import defaults
 from . import logger
 from xml.etree.ElementTree import Element
@@ -32,9 +32,9 @@ class PictureLoader(object):
                 i = 0
                 for im in sorted(self.programme.gallery_hi.values()):
                     i += 1
-                    file = self.__download_image(im, defaults.epgimages_dir)
-                    if file:
-                        icon = Element('icon', {'src': file})
+                    f = self.__download_image(im, defaults.epgimages_dir)
+                    if f:
+                        icon = Element('icon', {'src': f})
                         icons.append(icon)
                     if i == defaults.number_of_images_per_show:
                         break
@@ -43,7 +43,7 @@ class PictureLoader(object):
 
     def __download_image(self, file_url, file_dir):
         suffix_list = ['jpg', 'gif', 'png']
-        file_name = urllib.parse.split(file_url)[2].split('/')[-1]
+        file_name = urlsplit(file_url)[2].split('/')[-1]
         file_suffix = file_name.split('.')[1]
         full_file_path = path.abspath(path.join(file_dir, file_name))
         #check if file exists before downloading it again
@@ -52,9 +52,9 @@ class PictureLoader(object):
         else:
             i = requests.get(file_url)
             if file_suffix in suffix_list and i.status_code == requests.codes.ok:
-                with open(full_file_path, 'wb') as file:
-                    fchmod(file.fileno(), defaults.file_mode)
-                    file.write(i.content)
+                with open(full_file_path, 'wb') as f:
+                    fchmod(f.fileno(), defaults.file_mode)
+                    f.write(i.content)
                     logger.log("new file downloaded: {0}".format(full_file_path), logger.DEBUG)
             else:
                 return False
