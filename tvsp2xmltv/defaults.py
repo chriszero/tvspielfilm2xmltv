@@ -33,11 +33,12 @@ number_of_images_per_show = int(config['DEFAULT']['number_of_images_per_show'])
 debug = config['DEFAULT'].getboolean('debug')
 
 sart_map = {
-'SE': 'serie',
-'SP': 'movie',
-'RE': 'news',
-'AND': 'and',
-'U': 'undefined'}
+'SE': 'Serie',
+'SP': 'Film',
+'RE': 'News',
+'AND': 'Andere',
+'KIN': 'Kinder',
+'U': 'Undefined'}
 
 channel_map = {
 'ARD': 'ard.de',

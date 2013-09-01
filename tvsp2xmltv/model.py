@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import os
-from xml.etree.ElementTree import Element, ElementTree, SubElement
+from xml.etree.ElementTree import Element, ElementTree, SubElement, Comment, TreeBuilder
 
 import pytz
 
@@ -27,6 +27,7 @@ class Programme(object):
         self.starttime = details['starttime']
         self.endtime = details['endtime']
         self.jahr = details['jahr']
+        self.filmlaenge = details['filmlaenge']
 
         self.title_de = details['titel']
         self.title_orig = details['originaltitel']
@@ -34,6 +35,7 @@ class Programme(object):
         self.land = details['land']
         self.genre = details['genre']
         self.text = details['text']
+        self.fazit = details['fazit']
 
         self.regisseur = details['regisseur']  # Kommagetrennt
         self.darsteller = details['darsteller']  # Semikolongetrennte Liste
@@ -49,6 +51,7 @@ class Programme(object):
         self.wiederhol_hinweis = details['wiederhol_hinweis']  # Wiederholungshinweis
 
         self.sz_neu = details['sz_neu'] == 'J'
+        self.sz_hdtv = details['sz_hdtv'] == 'J'
 
         self.gallery_lo = json['gallery']
         self.gallery_hi = json['gallery_hi']
@@ -91,6 +94,8 @@ class Programme(object):
                                 'channel': defaults.channel_map[self.sender_id]
                             })
 
+        programme.append(Comment(' pid = {0} '.format(self.sendungs_id)))
+
         tmp = SubElement(programme, "title", {'lang': 'de'})
         tmp.text = self.title_de
 
@@ -117,6 +122,27 @@ class Programme(object):
             tmp = SubElement(programme, 'date')
             tmp.text = self.jahr
 
+        tmp = SubElement(programme, 'category', {'lang': 'de'})
+        tmp.text = self.genre
+
+        if defaults.sart_map.get(self.sart_id) is not None:
+            tmp = SubElement(programme, 'category')
+            tmp.text = defaults.sart_map[self.sart_id]
+
+        if self.filmlaenge:
+            tmp = SubElement(programme, 'length', {'units': 'minutes'})
+            tmp.text = self.filmlaenge.lstrip('/')
+
+        if self.loadPictures:
+            # Add images if available
+            picLoader = pictureLoader.PictureLoader(self)
+            iconTags = picLoader.get_xml()
+
+            if len(iconTags) > 0:
+                for icon in iconTags:
+                    programme.append(icon)
+
+
         if self.land:
             tmp = SubElement(programme, 'country')
             tmp.text = self.land
@@ -128,29 +154,18 @@ class Programme(object):
         except ValueError:
             pass
 
-        tmp = SubElement(programme, 'category', {'lang': 'de'})
-        tmp.text = self.genre
-
-        if defaults.sart_map.get(self.sart_id) != None:
-            tmp = SubElement(programme, 'category')
-            tmp.text = defaults.sart_map[self.sart_id]
-
-        tmp = SubElement(programme, 'category')
-        tmp.text = self.sendungs_id
+        if self.sz_hdtv:
+            tmp = SubElement(programme, 'video')
+            tmp = SubElement(tmp, 'quality')
+            tmp.text = 'HDTV'
 
         if self.sz_neu:
             SubElement(programme, 'new')
 
-        if self.loadPictures:
-            # Add images if available
-            picLoader = pictureLoader.PictureLoader(self)
-            iconTags = picLoader.get_xml()
+        if self.fazit:
+            tmp = SubElement(programme, 'review', {'type': 'text'})
+            tmp.text = self.fazit
 
-            if len(iconTags) > 0:
-                for icon in iconTags:
-                    programme.append(icon)
-
-        # print(tostring(programme))
         return programme
 
 
@@ -220,6 +235,7 @@ class XmltvRoot(object):
     def __init__(self):
         self.root = Element('tv', {'generator-info-name': 'tvspielfilm2xmltv grabber'})
 
+
     def append_element(self, xml):
         self.root.append(xml.get_xml())
 
@@ -236,5 +252,4 @@ class XmltvRoot(object):
 
         # Create an ElementTree object from the root element
         ElementTree(self.root).write(file, encoding="UTF-8", xml_declaration=True)
-
         file.close()

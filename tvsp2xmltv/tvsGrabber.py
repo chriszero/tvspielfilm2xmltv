@@ -13,7 +13,10 @@ from . import pictureLoader
 
 class TvsGrabber(object):
     def __init__(self):
-        self.headers = {'Connection': 'Keep-Alive'}
+        self.headers = {
+            'Connection': 'Keep-Alive',
+            'User-Agent': None
+        }
         self.channel_list = []
         self.grab_days = 1
         self.pictures = False
@@ -28,6 +31,7 @@ class TvsGrabber(object):
         url = "http://tvsapi.cellmp.de/getUpdate.php"
         r = requests.get(url, headers=self.headers)
         r.encoding = 'utf-8'
+        logger.log(r.url, logger.DEBUG)
         return json.JSONDecoder(strict=False).decode(r.text)
 
 
@@ -40,6 +44,7 @@ class TvsGrabber(object):
         url = "http://tvsapi.cellmp.de/getDetails.php"
         r = requests.get(url, params=payload, headers=self.headers)
         r.encoding = 'utf-8'
+        logger.log(r.url, logger.DEBUG)
         return json.JSONDecoder(strict=False).decode(r.text)
 
 
@@ -73,6 +78,7 @@ class TvsGrabber(object):
             logger.log("Failed to request", logger.MESSAGE)
             return []
         r.encoding = 'utf-8'
+        logger.log(r.url, logger.DEBUG)
         try:
             return json.JSONDecoder(strict=False).decode(r.text)
         except TypeError:
