@@ -33,7 +33,6 @@ install:
 # ugo+rw because may different user work with this file
 	@install -d -m ugo+rwx $(DESTDIR)/var/lib/epgsources
 	@install -d -m ugo+rwx $(DESTDIR)/var/lib/epgsources/$(GRABBER)-img
-	@install -d -m ugo+rwx $(DESTDIR)/var/cache/vdr/epgimages/$(GRABBER)
 # Done.
 	@echo All done.
 	@echo "Now create the controll file with \"$(GRABBER) -c\""
