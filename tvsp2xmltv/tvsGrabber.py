@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 import requests
 import datetime
@@ -13,6 +14,7 @@ class TvsGrabber(object):
 		self.headers = {'Connection': 'Keep-Alive'}
 		self.channel_list = []
 		self.grab_days = 1
+		self.pictures = False
 		self.xmltv_doc = model.XmltvRoot()
 		
 	
@@ -98,8 +100,10 @@ class TvsGrabber(object):
 		#print("Finished")
 	
 	def add_channel(self, channel):
-		self.channel_list.append(channel)
-		
+		if isinstance(channel, str):
+			self.channel_list.append(channel)
+		elif isinstance(channel, list):
+			self.channel_list += channel
 	
 	def save(self):
 		self.xmltv_doc.write_xml(defaults.destination_file)

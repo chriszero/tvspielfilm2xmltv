@@ -1,7 +1,9 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 from . import defaults
 import pytz 
 import datetime
+import os
 from xml.etree.ElementTree import Element, ElementTree, SubElement
 from datetime import date
 
@@ -212,7 +214,12 @@ class XmltvRoot(object):
 		return self.root
 
 	def write_xml(self, filename):
+		# Delete first because user have no permission to change attrib from files other users own
+		if os.path.exists(filename):
+			os.remove(filename)
 		file = open(filename, 'wb')
+		# Set filemode for every written file!
+		os.fchmod(file.fileno(), defaults.file_mode)
 
 		# Create an ElementTree object from the root element
 		ElementTree(self.root).write(file, encoding="UTF-8", xml_declaration=True)
