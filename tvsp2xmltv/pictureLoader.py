@@ -4,7 +4,7 @@ import requests
 import glob
 from io import open
 from os import path, remove, fchmod
-from urllib.parse import urlsplit
+import urllib
 from . import defaults
 from . import logger
 from xml.etree.ElementTree import Element
@@ -43,7 +43,7 @@ class PictureLoader(object):
 
     def __download_image(self, file_url, file_dir):
         suffix_list = ['jpg', 'gif', 'png']
-        file_name = urlsplit(file_url)[2].split('/')[-1]
+        file_name = urllib.parse.split(file_url)[2].split('/')[-1]
         file_suffix = file_name.split('.')[1]
         full_file_path = path.abspath(path.join(file_dir, file_name))
         #check if file exists before downloading it again

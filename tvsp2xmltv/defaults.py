@@ -3,7 +3,7 @@
 import operator
 import os
 import stat
-import configparser
+import ConfigParser
 
 # ugo+rw because may different user work with this file
 file_mode = stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH | stat.S_IWOTH
@@ -21,16 +21,16 @@ def find_in_path(file_name, path=None):
     return file_name
 
 
-config = configparser.ConfigParser()
+config = ConfigParser.ConfigParser()
 config.read(find_in_path('tvspielfilm2xmltv.ini'))
 
-destination_file = config['DEFAULT']['destination_file']
-control_file = config['DEFAULT']['control_file']
-epgimages_dir = config['DEFAULT']['epgimages_dir']
-remove_orphaned_images = config['DEFAULT'].getboolean('remove_orphaned_images')
-grab_today = config['DEFAULT'].getboolean('grab_today')
-number_of_images_per_show = int(config['DEFAULT']['number_of_images_per_show'])
-debug = config['DEFAULT'].getboolean('debug')
+destination_file = config.get('DEFAULT', 'destination_file')
+control_file = config.get('DEFAULT', 'control_file')
+epgimages_dir = config.get('DEFAULT', 'epgimages_dir')
+remove_orphaned_images = config.getboolean('DEFAULT', 'remove_orphaned_images')
+grab_today = config.getboolean('DEFAULT', 'grab_today')
+number_of_images_per_show = config.getint('DEFAULT', 'number_of_images_per_show')
+debug = config.getboolean('DEFAULT', 'debug')
 
 sart_map = {
 'SE': 'Serie',
