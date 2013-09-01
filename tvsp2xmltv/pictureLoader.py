@@ -29,7 +29,7 @@ class PictureLoader(object):
         if self.programme.gallery_hi:
             if len(self.programme.gallery_hi) > 0:
                 i = 0
-                for im in self.programme.gallery_hi.values():
+                for im in sorted(self.programme.gallery_hi.values()):
                     i += 1
                     file = self.__download_image(im, defaults.epgimages_dir)
                     if file:
