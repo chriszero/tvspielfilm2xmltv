@@ -5,17 +5,17 @@ Simple XMLTV generator for Linux VDR
 
 
 Dependencies:
-- python >= 3.2
+- python >= 2.7
 - requests
 - pytz
 
 Debian Dependencies:
-- python3
-- python3-requests
-- python3-tz
+- python
+- python-requests
+- python-tz
 
 ```bash
-apt-get install python3 python3-requests python3-tz
+apt-get install python python-requests python-tz
 ```
 
 Install:
