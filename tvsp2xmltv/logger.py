@@ -6,7 +6,10 @@ Created on 26.04.2013
 @author: Chris
 '''
 import sys
-import logging, logging.handlers
+import logging
+import logging.handlers
+from . import defaults
+
 
 ERROR = logging.ERROR
 WARNING = logging.WARNING
@@ -27,6 +30,7 @@ console = logging.StreamHandler(sys.stdout)
 console.setFormatter(logging.Formatter('%(asctime)s %(levelname)s::%(message)s', '%H:%M:%S'))
 logger.addHandler(console)
 
+
 def log(message, level=MESSAGE):
     #print(message)
     if level == MESSAGE:
@@ -37,6 +41,3 @@ def log(message, level=MESSAGE):
         logger.warning(message)
     if level == ERROR:
         logger.error(message)
-        
-
-        

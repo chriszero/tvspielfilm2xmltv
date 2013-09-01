@@ -1,12 +1,14 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-from . import defaults
-from . import pictureLoader
-import pytz
 import datetime
 import os
 from xml.etree.ElementTree import Element, ElementTree, SubElement
-from datetime import date
+
+import pytz
+
+from . import defaults
+from . import pictureLoader
+
 
 # Create Timezone according to our source
 tz_ger = pytz.timezone('Europe/Berlin')
@@ -84,9 +86,9 @@ class Programme(object):
 
         programme = Element('programme',
                             {
-                            'start': self.__format_date_for_xmltv(start),
-                            'stop': self.__format_date_for_xmltv(stop),
-                            'channel': defaults.channel_map[self.sender_id]
+                                'start': self.__format_date_for_xmltv(start),
+                                'stop': self.__format_date_for_xmltv(stop),
+                                'channel': defaults.channel_map[self.sender_id]
                             })
 
         tmp = SubElement(programme, "title", {'lang': 'de'})

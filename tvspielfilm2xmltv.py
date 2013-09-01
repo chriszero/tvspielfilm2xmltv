@@ -18,7 +18,7 @@ It defines classes_and_methods
 '''
 
 import sys
-import os, os.path
+import os
 
 # Root path
 base_path = os.path.realpath(__file__)
@@ -39,15 +39,20 @@ __updated__ = '2013-08-29'
 
 DEBUG = 0
 
+
 class CLIError(Exception):
     '''Generic exception to raise and log different fatal errors.'''
+
     def __init__(self, msg):
         super(CLIError).__init__(type(self))
         self.msg = "E: %s" % msg
+
     def __str__(self):
         return self.msg
+
     def __unicode__(self):
         return self.msg
+
 
 def main(argv=None): # IGNORE:C0111
     '''Command line options.'''
@@ -82,24 +87,25 @@ USAGE
         parser.add_argument("-t", "--time", dest="time", default="00:00", help="The time for the control file")
         parser.add_argument("-d", "--days", dest="days", default="14", help="numberof days for the control file")
         parser.add_argument('-V', '--version', action='version', version=program_version_message)
-        parser.add_argument(dest="option",  help="options from xmltv2vdr call [default: %(default)s]", metavar="option", nargs='*')
-        
+        parser.add_argument(dest="option", help="options from xmltv2vdr call [default: %(default)s]", metavar="option",
+                            nargs='*')
+
         # Process arguments
         args = parser.parse_args()
-        
+
         argvline = ""
         for a in sys.argv:
             argvline += a
             argvline += " "
-            
-        logger.log('Called with following arguments: "'+argvline+'"')
-        
+
+        logger.log('Called with following arguments: "' + argvline + '"')
+
         option = args.option
         cfile = args.cfile
 
         if cfile:
             defaults.write_controlfile(args.time, args.days)
-        
+
         if option:
             logger.log('Prepare grabbing...')
             grabber = tvsGrabber.TvsGrabber()
@@ -112,20 +118,20 @@ USAGE
             elif option[0] == '0':
                 grabber.pictures = False
                 option.pop(0)
-            
+
             grabber.add_channel(option)
-            
+
             logger.log('Start grabbing...')
             grabber.start_grab()
             logger.log('Saving xml...')
             grabber.save()
             logger.log('End of grabbing...')
-            
-        
+
         return 0
     except Exception as e:
         logger.log(program_name + ": " + repr(e) + "\n", logger.ERROR)
         return 2
+
 
 if __name__ == "__main__":
     if DEBUG:
