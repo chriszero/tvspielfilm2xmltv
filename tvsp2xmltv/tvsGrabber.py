@@ -7,6 +7,7 @@ import json
 from . import model
 from . import defaults
 from . import logger
+from . import pictureLoader
 
 class TvsGrabber(object):
 	
@@ -98,6 +99,7 @@ class TvsGrabber(object):
 				self.__grab_day(day, tvsp_id)
 				
 		#print("Finished")
+		pictureLoader.cleanup_images()
 	
 	def add_channel(self, channel):
 		if isinstance(channel, str):
@@ -113,13 +115,13 @@ class TvsGrabber(object):
 		data = self._get_category(date, [channel])
 		for s in data:
 			# Im Falle eines Fehlers beim grabben
-			try:			
+			#try:
 				progData = self._get_detail(s['sendungs_id'])
-				prog = model.Programme(progData)
+				prog = model.Programme(progData, self.pictures)
 				self.xmltv_doc.append_element(prog)
-			except Exception as e:
-				logger.log("Failed to fetch Details for " + s['sendungs_id'] + " on Channel " + channel, logger.MESSAGE)
-				logger.log("Pausing for 30 seconds.", logger.MESSAGE)
-				from time import sleep
-				sleep(30)
+			#except Exception as e:
+			#	logger.log("Failed to fetch Details for " + s['sendungs_id'] + " on Channel " + channel, logger.MESSAGE)
+			#	logger.log("Pausing for 30 seconds.", logger.MESSAGE)
+			#	from time import sleep
+			#	sleep(30)
 	

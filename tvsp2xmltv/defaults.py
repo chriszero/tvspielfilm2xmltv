@@ -25,7 +25,11 @@ config.read(find_in_path('tvspielfilm2xmltv.ini'))
 
 destination_file = config['DEFAULT']['destination_file']
 control_file = config['DEFAULT']['control_file']
-grab_today = config['DEFAULT']['grab_today']
+epgimages_dir = config['DEFAULT']['epgimages_dir']
+remove_orphaned_images = config['DEFAULT'].getboolean('remove_orphaned_images')
+grab_today = config['DEFAULT'].getboolean('grab_today')
+number_of_images_per_show = int(config['DEFAULT']['number_of_images_per_show'])
+debug = config['DEFAULT'].getboolean('debug')
 
 sart_map = {
 	'SE':'serie', 
@@ -183,7 +187,7 @@ def write_controlfile(grab_time, grab_days):
 		f = open(control_file, "w")
 		# Set filemode for every written file!
 		os.fchmod(f.fileno(), file_mode)
-		f.write('file;{0};0;0\n'.format(grab_time))	
+		f.write('file;{0};0;1\n'.format(grab_time))
 		f.write('{0}\n'.format(grab_days))
 		for val in sorted_x:
 			f.write(val)

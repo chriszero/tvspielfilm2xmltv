@@ -31,7 +31,7 @@ def log(message, level=MESSAGE):
     #print(message)
     if level == MESSAGE:
         logger.info(message)
-    if level == DEBUG:
+    if level == DEBUG and defaults.debug:
         logger.debug(message)
     if level == WARNING:
         logger.warning(message)
