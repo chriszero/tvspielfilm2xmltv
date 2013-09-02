@@ -136,13 +136,19 @@ class TvsGrabber(object):
         data = self._get_category(date, [] + tvsp_id)
         for s in data:
         # Im Falle eines Fehlers beim grabben
-            try:
+            if not defaults.debug:
+                try:
+                    progData = self._get_detail(s['sendungs_id'])
+                    prog = model.Programme(progData, channel_id, self.pictures)
+                    self.xmltv_doc.append_element(prog)
+                except Exception as e:
+                    logger.log("Failed to fetch Details for " + s['sendungs_id'] + " on Channel " + tvsp_id, logger.MESSAGE)
+                    logger.log("Pausing for 30 seconds.", logger.MESSAGE)
+                    from time import sleep
+
+                    sleep(30)
+
+            else:
                 progData = self._get_detail(s['sendungs_id'])
                 prog = model.Programme(progData, channel_id, self.pictures)
                 self.xmltv_doc.append_element(prog)
-            except Exception as e:
-                logger.log("Failed to fetch Details for " + s['sendungs_id'] + " on Channel " + tvsp_id, logger.MESSAGE)
-                logger.log("Pausing for 30 seconds.", logger.MESSAGE)
-                from time import sleep
-
-                sleep(30)
