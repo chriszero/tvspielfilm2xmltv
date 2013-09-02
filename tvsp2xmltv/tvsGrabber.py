@@ -87,13 +87,21 @@ class TvsGrabber(object):
 
     def start_grab(self):
 
-        #for name, channel_id in defaults.channel_map.items():
+        # single channels
         for chan_id in self.channel_list:
             tvsp_id = defaults.get_channel_key(chan_id)
-            chan = model.Channel(chan_id, tvsp_id)
-            self.xmltv_doc.append_element(chan)
+            if tvsp_id:
+                chan = model.Channel(chan_id, tvsp_id)
+                self.xmltv_doc.append_element(chan)
 
-        #for name, channel_id in defaults.channel_map.items():
+        # combination channels
+        for chan_id in self.channel_list:
+            if defaults.combination_channels.has_key(chan_id):
+                name = ';'.join(str(x) for x in defaults.combination_channels[chan_id])
+                chan = model.Channel(chan_id, name)
+                self.xmltv_doc.append_element(chan)
+
+        # single channels
         for chan_id in self.channel_list:
             tvsp_id = defaults.get_channel_key(chan_id)
 
@@ -101,9 +109,13 @@ class TvsGrabber(object):
             if not defaults.grab_today:
                 date = date + datetime.timedelta(days=1)
 
+            # combination channel
+            if not tvsp_id:
+                tvsp_id = defaults.combination_channels[chan_id]
+
             for i in range(self.grab_days):
                 day = date + datetime.timedelta(days=i)
-                self.__grab_day(day, tvsp_id)
+                self.__grab_day(day, tvsp_id, chan_id)
 
         #print("Finished")
         pictureLoader.cleanup_images()
@@ -117,17 +129,19 @@ class TvsGrabber(object):
     def save(self):
         self.xmltv_doc.write_xml(defaults.destination_file)
 
-    def __grab_day(self, date, channel):
+    def __grab_day(self, date, tvsp_id, channel_id):
         retry = 0
-        data = self._get_category(date, [channel])
+        if isinstance(tvsp_id, str):
+            tvsp_id = [tvsp_id]
+        data = self._get_category(date, [] + tvsp_id)
         for s in data:
         # Im Falle eines Fehlers beim grabben
             try:
                 progData = self._get_detail(s['sendungs_id'])
-                prog = model.Programme(progData, self.pictures)
+                prog = model.Programme(progData, channel_id, self.pictures)
                 self.xmltv_doc.append_element(prog)
             except Exception as e:
-                logger.log("Failed to fetch Details for " + s['sendungs_id'] + " on Channel " + channel, logger.MESSAGE)
+                logger.log("Failed to fetch Details for " + s['sendungs_id'] + " on Channel " + tvsp_id, logger.MESSAGE)
                 logger.log("Pausing for 30 seconds.", logger.MESSAGE)
                 from time import sleep
 

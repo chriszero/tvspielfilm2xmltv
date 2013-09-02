@@ -89,6 +89,7 @@ USAGE
         parser.add_argument('-V', '--version', action='version', version=program_version_message)
         parser.add_argument(dest="option", help="options from xmltv2vdr call [default: %(default)s]", metavar="option",
                             nargs='*')
+        parser.add_argument('-l', '--checkchannels', action='store_true', help='Go to http://www.vdr-wiki.de/wiki/index.php/Xmltv2vdr-plugin and safe the "Verbindliche EPG-Senderliste" to an text file called "channelids.txt"')
 
         # Process arguments
         args = parser.parse_args()
@@ -98,10 +99,13 @@ USAGE
             argvline += a
             argvline += " "
 
-        logger.log('Called with following arguments: "' + argvline + '"')
+        logger.log('Called with following arguments: "' + argvline + '"', logger.DEBUG)
 
         option = args.option
         cfile = args.cfile
+
+        if args.checkchannels:
+            defaults.checkchannelids()
 
         if cfile:
             defaults.write_controlfile(args.time, args.days)

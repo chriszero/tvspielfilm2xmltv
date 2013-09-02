@@ -15,9 +15,10 @@ tz_ger = pytz.timezone('Europe/Berlin')
 
 
 class Programme(object):
-    def __init__(self, json, loadPictures=False):
+    def __init__(self, json, channel_id=None, loadPictures=False):
 
         self.loadPictures = loadPictures
+        self.channel_id = channel_id
         details = json['details']
 
         self.sendungs_id = details['sendungs_id']
@@ -87,11 +88,14 @@ class Programme(object):
         if stop < start:
             stop = stop + datetime.timedelta(days=1)
 
+        if not self.channel_id:
+            self.channel_id = defaults.channel_map[self.sender_id]
+
         programme = Element('programme',
                             {
                                 'start': self.__format_date_for_xmltv(start),
                                 'stop': self.__format_date_for_xmltv(stop),
-                                'channel': defaults.channel_map[self.sender_id]
+                                'channel': self.channel_id
                             })
 
         programme.append(Comment(' pid = {0} '.format(self.sendungs_id)))

@@ -22,7 +22,8 @@ def find_in_path(file_name, path=None):
 
 
 config = ConfigParser.ConfigParser()
-config.read(find_in_path('tvspielfilm2xmltv.ini'))
+conf_file = find_in_path('tvspielfilm2xmltv.ini')
+config.read(conf_file)
 
 destination_file = config.get('DEFAULT', 'destination_file')
 control_file = config.get('DEFAULT', 'control_file')
@@ -39,6 +40,10 @@ sart_map = {
 'AND': 'Andere',
 'KIN': 'Kinder',
 'U': 'Undefined'}
+
+combination_channels = {
+    'nickcomedy.de': ['NICK', 'CC']
+}
 
 channel_map = {
 'ARD': 'ard.de',
@@ -192,6 +197,9 @@ def write_controlfile(grab_time, grab_days):
         os.fchmod(f.fileno(), file_mode)
         f.write('file;{0};0;1\n'.format(grab_time))
         f.write('{0}\n'.format(grab_days))
+        for key in combination_channels:
+            f.write(key)
+            f.write('\n')
         for val in sorted_x:
             f.write(val)
             f.write('\n')
@@ -200,18 +208,21 @@ def write_controlfile(grab_time, grab_days):
         f.close()
 
 
-if  __name__ == "__main__":
+def checkchannelids():
+    # Go to http://www.vdr-wiki.de/wiki/index.php/Xmltv2vdr-plugin
+    # and safe the "Verbindliche EPG-Senderliste" to an text file
+    # called "channelids.txt".
 
-# Go to http://www.vdr-wiki.de/wiki/index.php/Xmltv2vdr-plugin
-# and safe the "Verbindliche EPG-Senderliste" to an text file
-# called "channelids.txt".
-
-    print "Reading \"channelids.txt\".\n"
+    print('Reading "channelids.txt"')
     f = open("channelids.txt", "U")
-    channelids = f.read().split("\n")
+    channelids = f.read().split(os.linesep)
     f.close()
     channelids=filter(lambda x: len(x)>0, channelids)
 
     for name, val in channel_map.items():
+        if val not in channelids:
+            print("Channel ID \"%s\" not in official list!" % val)
+
+    for val in combination_channels.keys():
         if val not in channelids:
             print("Channel ID \"%s\" not in official list!" % val)
