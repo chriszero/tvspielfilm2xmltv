@@ -153,9 +153,12 @@ class Programme(object):
 
         try:
             if self.folge:
+                text = self.__generate_xmltv_ns()
                 tmp = SubElement(programme, 'episode-num', {'system': 'xmltv_ns'})
-                tmp.text = self.__generate_xmltv_ns()
+                tmp.text = text
         except ValueError:
+            tmp = SubElement(programme, 'episode-num', {'system': 'onscreen'})
+            tmp.text = self.folge
             pass
 
         if self.sz_hdtv:
@@ -174,7 +177,7 @@ class Programme(object):
 
 
     def __generate_xmltv_ns(self):
-        # ToDo: folgen mit 111;112 behandeln (Doppelfolgen?) Prüfen ob nur Zahlen im String sind
+        # ToDo: folgen mit 111;112 & 1-3 behandeln (Doppelfolgen?) Prüfen ob nur Zahlen im String sind
         if self.folge:
             ep = int(self.folge) - 1
         else:
