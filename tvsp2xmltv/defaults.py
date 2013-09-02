@@ -198,3 +198,20 @@ def write_controlfile(grab_time, grab_days):
 
     finally:
         f.close()
+
+
+if  __name__ == "__main__":
+
+# Go to http://www.vdr-wiki.de/wiki/index.php/Xmltv2vdr-plugin
+# and safe the "Verbindliche EPG-Senderliste" to an text file
+# called "channelids.txt".
+
+    print "Reading \"channelids.txt\".\n"
+    f = open("channelids.txt", "U")
+    channelids = f.read().split("\n")
+    f.close()
+    channelids=filter(lambda x: len(x)>0, channelids)
+
+    for name, val in channel_map.items():
+        if val not in channelids:
+            print("Channel ID \"%s\" not in official list!" % val)
