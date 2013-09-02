@@ -129,13 +129,13 @@ class Programme(object):
         tmp = SubElement(programme, 'category', {'lang': 'de'})
         tmp.text = self.genre
 
-        if defaults.sart_map.get(self.sart_id) is not None:
+        if defaults.sart_map.has_key(self.sart_id):
             tmp = SubElement(programme, 'category')
             tmp.text = defaults.sart_map[self.sart_id]
 
-        if self.filmlaenge:
+        if self.filmlaenge and len(self.filmlaenge.split('/')) > 0:
             tmp = SubElement(programme, 'length', {'units': 'minutes'})
-            tmp.text = self.filmlaenge.lstrip('/')
+            tmp.text = self.filmlaenge.split('/')[1]
 
         if self.loadPictures:
             # Add images if available

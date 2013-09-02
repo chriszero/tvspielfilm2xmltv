@@ -34,12 +34,14 @@ number_of_images_per_show = config.getint('DEFAULT', 'number_of_images_per_show'
 debug = config.getboolean('DEFAULT', 'debug')
 
 sart_map = {
-'SE': 'Serie',
-'SP': 'Film',
-'RE': 'News',
-'AND': 'Andere',
-'KIN': 'Kinder',
-'U': 'Undefined'}
+'SE': 'series',
+'SP': 'movie',
+'RE': 'news',
+'KIN': 'kids',
+'SPO': 'sports',
+#'AND': 'Andere',
+#'U': 'Undefined'
+}
 
 combination_channels = {
     'nickcomedy.de': ['NICK', 'CC']
