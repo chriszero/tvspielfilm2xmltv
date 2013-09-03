@@ -39,7 +39,7 @@ class TvsGrabber(object):
         """Holt die Sendungsdetails für die id ab
 
         """
-
+        logger.log("_get_detail({0})".format(prog_id), logger.DEBUG)
         payload = {'id': prog_id}
         url = "http://tvsapi.cellmp.de/getDetails.php"
         r = requests.get(url, params=payload, headers=self.headers)
@@ -56,7 +56,7 @@ class TvsGrabber(object):
         wird der Parameter weggelassen werden alle verfügbaren Sender Daten abgeholt
 
         """
-
+        logger.log("_get_category({0}, {1})".format(date, sender), logger.DEBUG)
         # Build channel array for request
         sender_len = len(sender)
         channel = '['
@@ -78,11 +78,11 @@ class TvsGrabber(object):
             logger.log("Failed to request", logger.MESSAGE)
             return []
         r.encoding = 'utf-8'
-        logger.log(r.url, logger.DEBUG)
+        logger.log("Grabbing channel {0}".format(r.url), logger.DEBUG)
         try:
             return json.JSONDecoder(strict=False).decode(r.text)
         except TypeError:
-            logger.log("Failed to decode json", logger.MESSAGE)
+            logger.log("Failed to decode json", logger.DEBUG)
             return []
 
     def start_grab(self):
@@ -136,19 +136,15 @@ class TvsGrabber(object):
         data = self._get_category(date, [] + tvsp_id)
         for s in data:
         # Im Falle eines Fehlers beim grabben
-            if not defaults.debug:
                 try:
                     progData = self._get_detail(s['sendungs_id'])
+                    logger.log("__grab_day:progData\n {0}".format(progData), logger.DEBUG)
                     prog = model.Programme(progData, channel_id, self.pictures)
                     self.xmltv_doc.append_element(prog)
                 except Exception as e:
                     logger.log("Failed to fetch Details for " + s['sendungs_id'] + " on Channel " + tvsp_id, logger.MESSAGE)
                     logger.log("Pausing for 30 seconds.", logger.MESSAGE)
                     from time import sleep
-
                     sleep(30)
-
-            else:
-                progData = self._get_detail(s['sendungs_id'])
-                prog = model.Programme(progData, channel_id, self.pictures)
-                self.xmltv_doc.append_element(prog)
+                    if defaults.debug:
+                        raise

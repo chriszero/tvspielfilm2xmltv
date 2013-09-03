@@ -19,6 +19,7 @@ It defines classes_and_methods
 
 import sys
 import os
+import traceback
 
 # Root path
 base_path = os.path.realpath(__file__)
@@ -133,7 +134,7 @@ USAGE
 
         return 0
     except Exception as e:
-        logger.log(program_name + ": " + repr(e) + "\n", logger.ERROR)
+        logger.log("{0}:\n{1}\n{2}".format(program_name, repr(e), traceback.format_exc()), logger.ERROR)
         return 2
 
 
