@@ -48,6 +48,7 @@ combination_channels = {
 }
 
 channel_map = {
+'PRO7M': 'prosieben-maxx.de',
 'ARD': 'ard.de',
 'ZDF': 'zdf.de',
 'RTL': 'rtl.de',
