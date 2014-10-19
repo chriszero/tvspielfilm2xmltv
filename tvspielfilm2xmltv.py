@@ -7,7 +7,7 @@ setup is a description
 
 It defines classes_and_methods
 
-@author:     user_name
+@author:     chris
         
 @copyright:  2013 organization_name. All rights reserved.
         
@@ -34,9 +34,9 @@ from tvsp2xmltv import defaults
 from tvsp2xmltv import tvsGrabber
 
 __all__ = []
-__version__ = 0.1
-__date__ = '2013-04-23'
-__updated__ = '2013-08-29'
+__version__ = 0.8
+__date__ = '2014-10-19'
+__updated__ = '2014-10-19'
 
 DEBUG = 0
 
@@ -69,7 +69,7 @@ def main(argv=None): # IGNORE:C0111
     program_shortdesc = __import__('__main__').__doc__.split("\n")[1]
     program_license = '''%s
 
-  Created by user_name on %s.
+  Created by chris on %s.
   Copyright 2013 organization_name. All rights reserved.
   
   Licensed under the Apache License 2.0
@@ -91,6 +91,7 @@ USAGE
         parser.add_argument(dest="option", help="options from xmltv2vdr call [default: %(default)s]", metavar="option",
                             nargs='*')
         parser.add_argument('-l', '--checkchannels', action='store_true', help='Go to http://www.vdr-wiki.de/wiki/index.php/Xmltv2vdr-plugin and safe the "Verbindliche EPG-Senderliste" to an text file called "channelids.txt"')
+        parser.add_argument('-m', '--checkchannelmap', action='store_true', help='Show the diff between channel map and server.')
 
         # Process arguments
         args = parser.parse_args()
@@ -107,6 +108,9 @@ USAGE
 
         if args.checkchannels:
             defaults.checkchannelids()
+
+        if args.checkchannelmap:
+            defaults.checkchannelmap()
 
         if cfile:
             defaults.write_controlfile(args.time, args.days)
@@ -140,7 +144,7 @@ USAGE
 
 if __name__ == "__main__":
     if DEBUG:
-        #sys.argv.append("-h")
-        #sys.argv.append("1 'pin' 0 ard.de zdf.de")
+        #sys.argv.append("-m")
+        #sys.argv.append("1 '' 0 ard.de zdf.de")
         pass
     sys.exit(main())

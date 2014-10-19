@@ -27,16 +27,16 @@ class PictureLoader(object):
 
     def get_xml(self):
         icons = []
-        if self.programme.gallery_hi:
-            if len(self.programme.gallery_hi) > 0:
+        if self.programme.images:
+            if len(self.programme.images) > 0:
                 i = 0
-                for im in sorted(self.programme.gallery_hi.values()):
+                for im in sorted(self.programme.images):
                     i += 1
-                    f = self.__download_image(im, defaults.epgimages_dir)
+                    f = self.__download_image(im['size{0}'.format(defaults.size_of_images)], defaults.epgimages_dir)
                     if f:
                         icon = Element('icon', {'src': f})
                         icons.append(icon)
-                    if i == defaults.number_of_images_per_show:
+                    if i >= defaults.number_of_images_per_show:
                         break
 
         return icons

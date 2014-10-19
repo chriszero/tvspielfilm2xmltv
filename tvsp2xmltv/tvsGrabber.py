@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import datetime
-import json
 
 import requests
 
@@ -14,8 +13,8 @@ from . import pictureLoader
 class TvsGrabber(object):
     def __init__(self):
         self.headers = {
-            'Connection': 'Keep-Alive',
-            'User-Agent': None
+            'Connection': 'close',
+            'User-Agent': 'Nexus 5; Android 4.4.4; de_DE'
         }
         self.channel_list = []
         self.grab_days = 1
@@ -23,67 +22,16 @@ class TvsGrabber(object):
         self.xmltv_doc = model.XmltvRoot()
 
 
-    def _get_update(self):
-        """liefert Infos mit Sender, Senderlogos
-
-        """
-
-        url = "http://tvsapi.cellmp.de/getUpdate.php"
+    def _get_channel(self, date, tvsp_id):
+        #broadcast/list/K1/2014-10-18
+        url = "http://tvs3.cellular.de/broadcast/list/{0}/{1}".format(tvsp_id, date)
         r = requests.get(url, headers=self.headers)
         r.encoding = 'utf-8'
-        logger.log(r.url, logger.DEBUG)
-        return json.JSONDecoder(strict=False).decode(r.text)
-
-
-    def _get_detail(self, prog_id):
-        """Holt die Sendungsdetails für die id ab
-
-        """
-        logger.log("_get_detail({0})".format(prog_id), logger.DEBUG)
-        payload = {'id': prog_id}
-        url = "http://tvsapi.cellmp.de/getDetails.php"
-        r = requests.get(url, params=payload, headers=self.headers)
-        r.encoding = 'utf-8'
-        logger.log(r.url, logger.DEBUG)
-        return json.JSONDecoder(strict=False).decode(r.text)
-
-
-    def _get_category(self, date, sender=[]):
-        """Holt verfügbare Sendungen
-
-        date: das Datum für welche wir die Daten wollen
-        sender: Eine Liste mit Sender ID's als string
-        wird der Parameter weggelassen werden alle verfügbaren Sender Daten abgeholt
-
-        """
-        logger.log("_get_category({0}, {1})".format(date, sender), logger.DEBUG)
-        # Build channel array for request
-        sender_len = len(sender)
-        channel = '['
-        for i in range(sender_len):
-            channel = channel + '"' + sender[i] + '"'
-            if i < sender_len - 1:
-                channel = channel + ','
-
-        channel = channel + ']'
-
-        logger.log('Grabbing Channel "' + channel + '" for date ' + date.isoformat())
-
-        payload = {'name': 'day', 'channel': channel, 'date': date.isoformat()}
-        url = "http://tvsapi.cellmp.de/getCategory_1_3.php"
-        try:
-            r = requests.get(url, params=payload, headers=self.headers)
-        #print(r.url)
-        except requests.exceptions.RequestException:
-            logger.log("Failed to request", logger.MESSAGE)
-            return []
-        r.encoding = 'utf-8'
-        logger.log("Grabbing channel {0}".format(r.url), logger.DEBUG)
-        try:
-            return json.JSONDecoder(strict=False).decode(r.text)
-        except TypeError:
-            logger.log("Failed to decode json", logger.DEBUG)
-            return []
+        if r.status_code == requests.codes.ok:
+            logger.log(r.url, logger.DEBUG)
+            return r.json()
+        else:
+            logger.log('{0} returned status code {1}'.format(r.url, r.status_code), logger.WARNING)
 
     def start_grab(self):
 
@@ -111,13 +59,16 @@ class TvsGrabber(object):
 
             # combination channel
             if not tvsp_id:
-                tvsp_id = defaults.combination_channels[chan_id]
+                if chan_id in defaults.combination_channels:
+                    tvsp_id = defaults.combination_channels[chan_id]
+                else:
+                    logger.log("Channel {0} not in channel map.".format(chan_id), logger.WARNING)
+                    continue
 
             for i in range(self.grab_days):
                 day = date + datetime.timedelta(days=i)
                 self.__grab_day(day, tvsp_id, chan_id)
 
-        #print("Finished")
         pictureLoader.cleanup_images()
 
     def add_channel(self, channel):
@@ -131,20 +82,14 @@ class TvsGrabber(object):
 
     def __grab_day(self, date, tvsp_id, channel_id):
         retry = 0
-        if isinstance(tvsp_id, str):
-            tvsp_id = [tvsp_id]
-        data = self._get_category(date, [] + tvsp_id)
+        data = self._get_channel(date, tvsp_id)
         for s in data:
         # Im Falle eines Fehlers beim grabben
-                try:
-                    progData = self._get_detail(s['sendungs_id'])
-                    logger.log("__grab_day:progData\n {0}".format(progData), logger.DEBUG)
-                    prog = model.Programme(progData, channel_id, self.pictures)
-                    self.xmltv_doc.append_element(prog)
-                except Exception as e:
-                    logger.log("Failed to fetch Details for " + s['sendungs_id'] + " on Channel " + tvsp_id, logger.MESSAGE)
-                    logger.log("Pausing for 30 seconds.", logger.MESSAGE)
-                    from time import sleep
-                    sleep(30)
-                    if defaults.debug:
-                        raise
+            try:
+                prog = model.Programme(s, channel_id, self.pictures)
+                self.xmltv_doc.append_element(prog)
+            except Exception as e:
+                logger.log("Failed to fetch Channel " + tvsp_id + " at " + date, logger.WARNING)
+                logger.log(e, logger.WARNING)
+                if defaults.debug:
+                    raise
