@@ -13,8 +13,10 @@ from . import pictureLoader
 class TvsGrabber(object):
     def __init__(self):
         self.headers = {
-            'Connection': 'close',
-            'User-Agent': 'Nexus 5; Android 4.4.4; de_DE'
+            'Connection': 'Keep-Alive',
+            'User-Agent': '4.2 (Nexus 10; Android 6.0.1; de_DE)',
+            'Accept' : 'application/json, application/xml',
+            'Accept-Encoding' : 'gzip, deflate'
         }
         self.channel_list = []
         self.grab_days = 1
@@ -24,7 +26,9 @@ class TvsGrabber(object):
 
     def _get_channel(self, date, tvsp_id):
         #broadcast/list/K1/2014-10-18
-        url = "http://tvs3.cellular.de/broadcast/list/{0}/{1}".format(tvsp_id, date)
+        #url = "http://tvs3.cellular.de/broadcast/list/{0}/{1}".format(tvsp_id, date)
+        url = "https://live.tvspielfilm.de/static/broadcast/list/{0}/{1}".format(tvsp_id, date)
+        print url
         r = requests.get(url, headers=self.headers)
         r.encoding = 'utf-8'
         if r.status_code == requests.codes.ok:
@@ -89,7 +93,7 @@ class TvsGrabber(object):
                 prog = model.Programme(s, channel_id, self.pictures)
                 self.xmltv_doc.append_element(prog)
             except Exception as e:
-                logger.log("Failed to fetch Channel " + tvsp_id + " at " + date, logger.WARNING)
+                logger.log("Failed to fetch Channel {0} at {1}".format(tvsp_id, date), logger.WARNING)
                 logger.log(e, logger.WARNING)
                 if defaults.debug:
                     raise
