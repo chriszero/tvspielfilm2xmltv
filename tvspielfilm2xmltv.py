@@ -34,9 +34,9 @@ from tvsp2xmltv import defaults
 from tvsp2xmltv import tvsGrabber
 
 __all__ = []
-__version__ = 0.0.9
-__date__ = '2016-03-29'
-__updated__ = '2016-03-29'
+__version__ = '0.1.0'
+__date__ = '2016-04-01'
+__updated__ = '2016-04-01'
 
 DEBUG = 0
 
